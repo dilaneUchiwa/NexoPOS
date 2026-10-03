@@ -38,7 +38,8 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts \
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-ENV PORT=10000
+ENV PORT=10000 \
+    TRUSTED_PROXIES=*
 EXPOSE 10000
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]

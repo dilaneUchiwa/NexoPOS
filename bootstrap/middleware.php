@@ -33,6 +33,14 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 $middleware->redirectGuestsTo( fn() => route( 'ns.login' ) );
 
 /**
+ * Behind a reverse proxy (Render, load balancers), set TRUSTED_PROXIES=* so
+ * X-Forwarded-Proto is honored and generated URLs use https.
+ */
+if ( env( 'TRUSTED_PROXIES' ) ) {
+    $middleware->trustProxies( at: env( 'TRUSTED_PROXIES' ) === '*' ? '*' : explode( ',', env( 'TRUSTED_PROXIES' ) ) );
+}
+
+/**
  * We'll list here all aliased middleware.
  */
 $middleware->alias( [
