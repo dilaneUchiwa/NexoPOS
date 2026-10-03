@@ -21,5 +21,6 @@ if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
     php artisan migrate --force || true
 fi
 
-chown -R www-data:www-data storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache database
+chown www-data:www-data .env
 exec docker-php-entrypoint "$@"
