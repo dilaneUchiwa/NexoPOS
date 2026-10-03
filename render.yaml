@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: nexopos
+    runtime: docker
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false   # php artisan key:generate --show
+      - key: APP_URL
+        sync: false   # https://<nom>.onrender.com
+      - key: SESSION_DOMAIN
+        sync: false   # <nom>.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromService: { type: pserv, name: nexopos-mysql, property: host }
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_DATABASE
+        value: nexopos
+      - key: DB_USERNAME
+        value: nexopos
+      - key: DB_PASSWORD
+        fromService: { type: pserv, name: nexopos-mysql, envVarKey: MYSQL_PASSWORD }
+
+  - type: pserv
+    name: nexopos-mysql
+    runtime: image
+    image:
+      url: docker.io/library/mysql:8.0
+    plan: starter
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_DATABASE
+        value: nexopos
+      - key: MYSQL_USER
+        value: nexopos
+      - key: MYSQL_PASSWORD
+        generateValue: true
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
